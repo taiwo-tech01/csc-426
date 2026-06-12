@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSC426 Practical Works</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f2f2f2;
+    color: #111;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 18px 30px;
+  }
+
+  header h1 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  header p {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 3px;
+  }
+
+  nav {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    padding: 0 30px;
+  }
+
+  nav button {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    padding: 12px 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #555;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  nav button.active {
+    color: #111;
+    font-weight: 600;
+    border-bottom-color: #111;
+  }
+
+  nav button:hover:not(.active) {
+    color: #111;
+    background: #f7f7f7;
+  }
+
+  .page {
+    display: none;
+    padding: 35px 30px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+  }
+
+  .calc-screen {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 12px 14px;
+    text-align: right;
+    margin-bottom: 14px;
+    min-height: 72px;
+  }
+
+  .calc-screen .expr {
+    font-size: 12px;
+    color: #999;
+    min-height: 16px;
+    word-break: break-all;
+  }
+
+  .calc-screen .result {
+    font-size: 28px;
+    font-weight: 300;
+    color: #111;
+    word-break: break-all;
+    margin-top: 4px;
+  }
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .calc-grid button {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    padding: 13px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background: #fff;
+    cursor: pointer;
+    color: #111;
+  }
+
+  .calc-grid button:hover {
+    background: #f2f2f2;
+  }
+
+  .calc-grid button.op {
+    background: #f7f7f7;
+    color: #333;
+  }
+
+  .calc-grid button.op:hover {
+    background: #eee;
+  }
+
+  .calc-grid button.clear {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+  }
+
+  .calc-grid button.clear:hover {
+    background: #333;
+  }
+
+  .calc-grid button.equals {
+    background: #444;
+    color: #fff;
+    border-color: #444;
+  }
+
+  .calc-grid button.equals:hover {
+    background: #555;
+  }
+
+  .calc-error {
+    font-size: 12px;
+    color: #c00;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 9px 11px;
+    font-size: 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    outline: none;
+    color: #111;
+    background: #fff;
+  }
+
+  .form-group input:focus {
+    border-color: #555;
+  }
+
+  .form-group input.invalid {
+    border-color: #c00;
+  }
+
+  .field-err {
+    font-size: 12px;
+    color: #c00;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 16px 0;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    padding: 9px 22px;
+    border-radius: 3px;
+    border: 1px solid #111;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+  }
+
+  .btn-primary:hover {
+    background: #333;
+  }
+
+  .btn-secondary {
+    background: #fff;
+    color: #111;
+  }
+
+  .btn-secondary:hover {
+    background: #f2f2f2;
+  }
+
+  .alert {
+    margin-top: 16px;
+    padding: 10px 13px;
+    border-radius: 3px;
+    font-size: 13px;
+    display: none;
+  }
+
+  .alert.success {
+    background: #f0f0f0;
+    border: 1px solid #bbb;
+    color: #222;
+  }
+
+  .alert.error {
+    background: #fff5f5;
+    border: 1px solid #c00;
+    color: #c00;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #888;
+    margin-top: 13px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CSC426 - Practical Works</h1>
+  <p>Student Assignment Portfolio</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('calc', this)">Practical 1 - Calculator</button>
+  <button onclick="showPage('login', this)">Practical 2 - Login App</button>
+</nav>
+
+<div id="calc" class="page active">
+  <p class="section-title">GUI Calculator</p>
+  <div class="card">
+    <div class="calc-screen">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="display">0</div>
+    </div>
+    <div class="calc-grid">
+      <button class="clear" onclick="clearCalc()">C</button>
+      <button class="op" onclick="appendOp('%')">%</button>
+      <button class="op" onclick="appendOp('^')">^</button>
+      <button class="op" onclick="appendOp('/')">/</button>
+
+      <button onclick="appendNum('7')">7</button>
+      <button onclick="appendNum('8')">8</button>
+      <button onclick="appendNum('9')">9</button>
+      <button class="op" onclick="appendOp('*')">*</button>
+
+      <button onclick="appendNum('4')">4</button>
+      <button onclick="appendNum('5')">5</button>
+      <button onclick="appendNum('6')">6</button>
+      <button class="op" onclick="appendOp('-')">-</button>
+
+      <button onclick="appendNum('1')">1</button>
+      <button onclick="appendNum('2')">2</button>
+      <button onclick="appendNum('3')">3</button>
+      <button class="op" onclick="appendOp('+')">+</button>
+
+      <button onclick="appendNum('0')" style="grid-column: span 2">0</button>
+      <button onclick="appendDot()">.</button>
+      <button class="equals" onclick="calculate()">=</button>
+    </div>
+    <div class="calc-error" id="calc-error"></div>
+  </div>
+</div>
+
+<div id="login" class="page">
+  <p class="section-title">Login Authentication</p>
+  <div class="card">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="off">
+      <div class="field-err" id="u-err">Username is required.</div>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password">
+      <div class="field-err" id="p-err">Password is required.</div>
+    </div>
+    <hr class="divider">
+    <div class="form-actions">
+      <button class="btn btn-primary" onclick="doLogin()">Login</button>
+      <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+    </div>
+    <div class="alert" id="login-alert"></div>
+  </div>
+  <p class="hint">Demo credentials: username <strong>student</strong> / password <strong>csc426</strong></p>
+</div>
+
+<script>
+  var expression = "";
+  var justCalculated = false;
+
+  function showPage(id, btn) {
+    document.querySelectorAll(".page").forEach(function(p) {
+      p.classList.remove("active");
+    });
+    document.querySelectorAll("nav button").forEach(function(b) {
+      b.classList.remove("active");
+    });
+    document.getElementById(id).classList.add("active");
+    btn.classList.add("active");
+  }
+
+  function updateDisplay() {
+    document.getElementById("display").textContent = expression === "" ? "0" : expression;
+  }
+
+  function appendNum(n) {
+    if (justCalculated) {
+      expression = "";
+      justCalculated = false;
+    }
+    document.getElementById("calc-error").textContent = "";
+    expression += n;
+    updateDisplay();
+  }
+
+  function appendOp(op) {
+    justCalculated = false;
+    document.getElementById("calc-error").textContent = "";
+    if (expression === "" && op !== "-") return;
+    var last = expression.slice(-1);
+    if (["+", "-", "*", "/", "^", "%"].includes(last)) {
+      expression = expression.slice(0, -1);
+    }
+    expression += op;
+    updateDisplay();
+  }
+
+  function appendDot() {
+    if (justCalculated) {
+      expression = "0";
+      justCalculated = false;
+    }
+    var parts = expression.split(/[\+\-\*\/\^\%]/);
+    var last = parts[parts.length - 1];
+    if (last.includes(".")) return;
+    if (last === "") expression += "0";
+    expression += ".";
+    updateDisplay();
+  }
+
+  function clearCalc() {
+    expression = "";
+    justCalculated = false;
+    document.getElementById("display").textContent = "0";
+    document.getElementById("expr").textContent = "";
+    document.getElementById("calc-error").textContent = "";
+  }
+
+  function calculate() {
+    if (expression === "") return;
+    try {
+      document.getElementById("expr").textContent = expression + " =";
+      var safe = expression.replace(/\^/g, "**");
+      var result = Function('"use strict"; return (' + safe + ')')();
+      if (!isFinite(result)) {
+        document.getElementById("calc-error").textContent = "Cannot divide by zero.";
+        document.getElementById("display").textContent = "Error";
+        expression = "";
+        return;
+      }
+      result = Math.round(result * 1e10) / 1e10;
+      expression = String(result);
+      document.getElementById("display").textContent = expression;
+      justCalculated = true;
+    } catch (e) {
+      document.getElementById("calc-error").textContent = "Invalid expression.";
+      document.getElementById("display").textContent = "Error";
+      expression = "";
+    }
+  }
+
+  function doLogin() {
+    var u = document.getElementById("username");
+    var p = document.getElementById("password");
+    var ue = document.getElementById("u-err");
+    var pe = document.getElementById("p-err");
+    var msg = document.getElementById("login-alert");
+
+    u.classList.remove("invalid");
+    p.classList.remove("invalid");
+    ue.style.display = "none";
+    pe.style.display = "none";
+    msg.style.display = "none";
+    msg.className = "alert";
+
+    var ok = true;
+
+    if (u.value.trim() === "") {
+      u.classList.add("invalid");
+      ue.style.display = "block";
+      ok = false;
+    }
+
+    if (p.value === "") {
+      p.classList.add("invalid");
+      pe.style.display = "block";
+      ok = false;
+    }
+
+    if (!ok) return;
+
+    if (u.value.trim() === "student" && p.value === "csc426") {
+      msg.textContent = "Login successful. Welcome, " + u.value.trim() + ".";
+      msg.classList.add("success");
+    } else {
+      msg.textContent = "Incorrect username or password. Please try again.";
+      msg.classList.add("error");
+    }
+
+    msg.style.display = "block";
+  }
+
+  function resetForm() {
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("username").classList.remove("invalid");
+    document.getElementById("password").classList.remove("invalid");
+    document.getElementById("u-err").style.display = "none";
+    document.getElementById("p-err").style.display = "none";
+    var msg = document.getElementById("login-alert");
+    msg.style.display = "none";
+    msg.className = "alert";
+  }
+</script>
+
+</body>
+</html>
